@@ -1,0 +1,17 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8081:${PORT}"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    env_file: .env
+    environment:
+      PORT: ${PORT}
+      DB_PATH: ${DB_PATH}
+    volumes:
+      - sqlite:/app/db/
+
+volumes:
+  sqlite:

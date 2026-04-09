@@ -5,13 +5,20 @@ import (
 	"hookfy/config"
 	"hookfy/handlers"
 	"hookfy/worker"
+	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	port, exists := os.LookupEnv("PORT")
+	if !exists {
+		log.Fatalln("PORT variable not set")
+	}
+
 	config.Connect()
 	worker.StartDeleteExpiredWorker(config.DB, context.Background())
 
@@ -36,5 +43,5 @@ func main() {
 		ctx.HTML(http.StatusOK, "index.html", nil)
 	})
 
-	r.Run(":8081")
+	r.Run(":" + port)
 }
