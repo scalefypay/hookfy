@@ -1,0 +1,236 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg:      #0d0d0d;
+    --surface: #161616;
+    --panel:   #111;
+    --border:  #242424;
+    --text:    #e0e0e0;
+    --muted:   #555;
+    --accent:  #22c55e;
+
+    --get:    #22c55e;
+    --post:   #3b82f6;
+    --put:    #f59e0b;
+    --patch:  #f97316;
+    --delete: #ef4444;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 15px;
+    overflow: hidden;
+}
+
+/* ── Layout ── */
+.layout {
+    display: flex;
+    height: 100vh;
+}
+
+/* ── Aside (30%) ── */
+aside {
+    width: 30%;
+    min-width: 220px;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    background: var(--panel);
+    overflow: hidden;
+}
+
+.aside-header {
+    padding: 14px 14px 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.logo {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+}
+
+.aside-header input {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 6px 10px;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s;
+    width: 100%;
+}
+
+.aside-header input:focus  { border-color: var(--accent); }
+.aside-header input::placeholder { color: var(--muted); }
+
+#list {
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* ── List items ── */
+.list-item {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.1s;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.list-item:hover  { background: var(--surface); }
+.list-item.active { background: #0f1f14; border-left: 2px solid var(--accent); }
+
+.list-item-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.list-hash {
+    font-size: 13px;
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.list-item-url {
+    font-family: monospace;
+    font-size: 13px;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: 0.7;
+}
+
+.list-item-time {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.list-empty {
+    padding: 32px 14px;
+    color: var(--muted);
+    text-align: center;
+    font-size: 14px;
+}
+
+/* ── Method badge ── */
+.method {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    color: #000;
+}
+
+.method-GET    { background: var(--get); }
+.method-POST   { background: var(--post); color: #fff; }
+.method-PUT    { background: var(--put); }
+.method-PATCH  { background: var(--patch); }
+.method-DELETE { background: var(--delete); color: #fff; }
+
+/* ── Main detail (70%) ── */
+main {
+    flex: 1;
+    overflow-y: auto;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+}
+
+.empty-state {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 15px;
+}
+
+/* ── Detail content ── */
+.detail-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 24px 12px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.detail-url {
+    font-family: monospace;
+    font-size: 15px;
+    color: var(--text);
+    word-break: break-all;
+}
+
+.detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--muted);
+    flex-shrink: 0;
+}
+
+.detail-meta b {
+    color: var(--text);
+    font-weight: 500;
+}
+
+/* ── Sections ── */
+.detail-section {
+    border-bottom: 1px solid var(--border);
+}
+
+.section-label {
+    padding: 10px 24px 6px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+}
+
+.detail-section pre {
+    padding: 0 24px 16px;
+    font-family: monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.detail-section pre b {
+    color: var(--muted);
+    font-weight: 500;
+    display: inline-block;
+    min-width: 180px;
+}

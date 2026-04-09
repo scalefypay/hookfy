@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hookfy</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="/static/js/htmx.min.js" defer></script>
+    <script>
+        function selectItem(el) {
+            document.querySelectorAll('.list-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+        }
+    </script>
+</head>
+<body>
+    <div class="layout">
+
+        <!-- LEFT: list -->
+        <aside>
+            <div class="aside-header">
+                <span class="logo">hookfy</span>
+                <input
+                    type="text"
+                    name="hash"
+                    placeholder="filtrar..."
+                    autocomplete="off"
+                    hx-get="/webhooks/inbox?type=html"
+                    hx-trigger="input changed delay:300ms"
+                    hx-target="#list"
+                    hx-include="[name='hash']"
+                >
+            </div>
+            <div
+                id="list"
+                hx-get="/webhooks/inbox?type=html"
+                hx-trigger="load, every 5s"
+                hx-include="[name='hash']"
+            ></div>
+        </aside>
+
+        <!-- RIGHT: detail -->
+        <main id="detail">
+            <div class="empty-state">
+                <p>selecione um webhook</p>
+            </div>
+        </main>
+
+    </div>
+</body>
+</html>

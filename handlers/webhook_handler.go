@@ -56,6 +56,16 @@ func CreateWebhook(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "webhook received", "id": webhook.ID})
 }
 
+func GetWebhook(c *gin.Context) {
+	id := c.Param("id")
+	var webhook models.Webhook
+	if err := config.DB.First(&webhook, id).Error; err != nil {
+		c.HTML(404, "detail.html", gin.H{"webhook": nil})
+		return
+	}
+	c.HTML(200, "detail.html", gin.H{"webhook": webhook})
+}
+
 func GetInbox(c *gin.Context) {
 	format := c.DefaultQuery("type", "json")
 	hash := c.Query("hash")
@@ -74,7 +84,6 @@ func GetInbox(c *gin.Context) {
 		c.HTML(200, "inbox.html", gin.H{
 			"webhooks": webhooks,
 			"hash":     hash,
-
 			"total":    total,
 		})
 		return

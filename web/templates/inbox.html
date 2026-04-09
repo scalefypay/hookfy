@@ -1,0 +1,18 @@
+{{range .webhooks}}
+<div
+    class="list-item"
+    hx-get="/webhooks/{{.ID}}"
+    hx-target="#detail"
+    hx-swap="innerHTML"
+    onclick="selectItem(this)"
+>
+    <div class="list-item-top">
+        <span class="method method-{{.Method}}">{{.Method}}</span>
+        <span class="list-hash">{{.Hash}}</span>
+    </div>
+    <div class="list-item-url">{{.URL}}</div>
+    <div class="list-item-time">{{.CreatedAt.Format "02/01 15:04:05"}}</div>
+</div>
+{{else}}
+<p class="list-empty">nenhum webhook.</p>
+{{end}}

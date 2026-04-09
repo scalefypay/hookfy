@@ -1,9 +1,11 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"hookfy/config"
 	"hookfy/handlers"
+	"hookfy/worker"
+	"net/http"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -11,8 +13,12 @@ import (
 
 func main() {
 	config.Connect()
+	worker.StartDeleteExpiredWorker(config.DB, context.Background())
 
 	r := gin.Default()
+
+	r.Static("/static", "web/static")
+	r.LoadHTMLGlob("web/templates/*")
 
 	r.Use(cors.New(cors.Config{
 		AllowAllOrigins:  true,
@@ -23,9 +29,12 @@ func main() {
 	}))
 
 	r.POST("/webhooks/:hash", handlers.CreateWebhook)
-
 	r.GET("/webhooks/inbox", handlers.GetInbox)
+	r.GET("/webhooks/:id", handlers.GetWebhook)
 
-	fmt.Println("Server is running on port 8081")
+	r.GET("/", func(ctx *gin.Context) {
+		ctx.HTML(http.StatusOK, "index.html", nil)
+	})
+
 	r.Run(":8081")
 }

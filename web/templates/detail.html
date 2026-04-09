@@ -1,0 +1,36 @@
+{{if not .webhook}}
+<div class="empty-state"><p>webhook não encontrado.</p></div>
+{{else}}
+{{$w := .webhook}}
+<div class="detail-header">
+    <span class="method method-{{$w.Method}}">{{$w.Method}}</span>
+    <span class="detail-url">{{$w.URL}}</span>
+</div>
+<div class="detail-meta">
+    <span>hash: <b>{{$w.Hash}}</b></span>
+    <span>de: <b>{{$w.RemoteAddr}}</b></span>
+    <span>recebido: <b>{{$w.CreatedAt.Format "02/01/2006 15:04:05"}}</b></span>
+    <span>expira: <b>{{$w.ExpiresAt.Format "02/01/2006 15:04:05"}}</b></span>
+</div>
+
+{{if $w.Body}}
+<div class="detail-section">
+    <div class="section-label">body</div>
+    <pre>{{range $k, $v := $w.Body}}{{$v}}{{end}}</pre>
+</div>
+{{end}}
+
+{{if $w.QueryString}}
+<div class="detail-section">
+    <div class="section-label">query string</div>
+    <pre>{{range $k, $v := $w.QueryString}}<b>{{$k}}</b>  {{$v}}
+{{end}}</pre>
+</div>
+{{end}}
+
+<div class="detail-section">
+    <div class="section-label">headers</div>
+    <pre>{{range $k, $v := $w.Headers}}<b>{{$k}}</b>  {{$v}}
+{{end}}</pre>
+</div>
+{{end}}
