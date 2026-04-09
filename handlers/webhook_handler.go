@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"io"
-	"strconv"
 	"strings"
 	"time"
 
@@ -61,16 +60,6 @@ func GetInbox(c *gin.Context) {
 	format := c.DefaultQuery("type", "json")
 	hash := c.Query("hash")
 
-	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
-	psize, _ := strconv.Atoi(c.DefaultQuery("psize", "20"))
-	if page < 1 {
-		page = 1
-	}
-	if psize < 1 || psize > 100 {
-		psize = 20
-	}
-	offset := (page - 1) * psize
-
 	var total int64
 	q := config.DB.Model(&models.Webhook{}).Where("expires_at > ?", time.Now())
 	if hash != "" {
@@ -79,14 +68,13 @@ func GetInbox(c *gin.Context) {
 	q.Count(&total)
 
 	var webhooks []models.Webhook
-	q.Order("created_at DESC").Limit(psize).Offset(offset).Find(&webhooks)
+	q.Order("created_at DESC").Find(&webhooks)
 
 	if format == "html" {
 		c.HTML(200, "inbox.html", gin.H{
 			"webhooks": webhooks,
 			"hash":     hash,
-			"page":     page,
-			"psize":    psize,
+
 			"total":    total,
 		})
 		return
@@ -94,8 +82,6 @@ func GetInbox(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"data":  webhooks,
-		"page":  page,
-		"psize": psize,
 		"total": total,
 	})
 }

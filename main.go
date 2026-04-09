@@ -13,7 +13,6 @@ func main() {
 	config.Connect()
 
 	r := gin.Default()
-	r.LoadHTMLGlob("views/*")
 
 	r.Use(cors.New(cors.Config{
 		AllowAllOrigins:  true,
