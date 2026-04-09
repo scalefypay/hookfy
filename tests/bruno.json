@@ -1,0 +1,6 @@
+{
+  "version": "1",
+  "name": "Hookfy",
+  "type": "collection",
+  "ignore": ["node_modules"]
+}

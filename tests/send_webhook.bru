@@ -1,0 +1,26 @@
+meta {
+  name: Send Webhook
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8081/webhooks/test-hash-123
+  body: json
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "amount": 4000,
+    "status": "paid"
+  }
+}
+
+script:post-response {
+  console.log("Status:", res.status);
+  console.log("Body:", JSON.stringify(res.body, null, 2));
+}
