@@ -1,0 +1,19 @@
+meta {
+  name: Get Inbox
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:8081/webhooks/inbox?type=json&page=1&psize=20
+  body: none
+}
+
+headers {
+  Accept: application/json
+}
+
+script:post-response {
+  console.log("Status:", res.status);
+  console.log("Body:", JSON.stringify(res.body, null, 2));
+}

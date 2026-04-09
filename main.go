@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"hookfy/config"
 	"hookfy/handlers"
 
 	"github.com/gin-contrib/cors"
@@ -9,8 +10,10 @@ import (
 )
 
 func main() {
+	config.Connect()
 
 	r := gin.Default()
+	r.LoadHTMLGlob("views/*")
 
 	r.Use(cors.New(cors.Config{
 		AllowAllOrigins:  true,
@@ -22,11 +25,7 @@ func main() {
 
 	r.POST("/webhooks/:hash", handlers.CreateWebhook)
 
-	r.GET("/webhooks/inbox", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "Webhook inbox",
-		})
-	})
+	r.GET("/webhooks/inbox", handlers.GetInbox)
 
 	fmt.Println("Server is running on port 8081")
 	r.Run(":8081")

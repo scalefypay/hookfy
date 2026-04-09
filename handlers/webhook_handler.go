@@ -50,17 +50,16 @@ func CreateWebhook(c *gin.Context) {
 		ExpiresAt:   time.Now().Add(defaultTTL),
 	}
 
-	/*if err := config.DB.Create(&webhook).Error; err != nil {
+	if err := config.DB.Create(&webhook).Error; err != nil {
 		c.JSON(500, gin.H{"error": "failed to save webhook"})
 		return
-	}*/ //pendenci na configuracao do bd
-
+	}
 	c.JSON(200, gin.H{"message": "webhook received", "id": webhook.ID})
 }
 
 func GetInbox(c *gin.Context) {
-	hash := c.Param("hash")
 	format := c.DefaultQuery("type", "json")
+	hash := c.Query("hash")
 
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	psize, _ := strconv.Atoi(c.DefaultQuery("psize", "20"))
@@ -73,7 +72,10 @@ func GetInbox(c *gin.Context) {
 	offset := (page - 1) * psize
 
 	var total int64
-	q := config.DB.Model(&models.Webhook{}).Where("hash = ? AND expires_at > ?", hash, time.Now())
+	q := config.DB.Model(&models.Webhook{}).Where("expires_at > ?", time.Now())
+	if hash != "" {
+		q = q.Where("hash = ?", hash)
+	}
 	q.Count(&total)
 
 	var webhooks []models.Webhook
