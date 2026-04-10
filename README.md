@@ -1,6 +1,6 @@
 # Hookfy
 
-Hookfy is a lightweight webhook inspector and testing tool built by [Scalefy](https://github.com/scalefy). It lets you receive webhooks on unique URLs and inspect their full contents — headers, body, query strings, and metadata — through a simple API.
+Hookfy is a lightweight webhook inspector and testing tool built by [Scalefy](https://github.com/scalefy). It lets you receive webhooks on unique URLs and inspect their full contents — headers, body, query strings, and metadata — through an API and a built-in web interface.
 
 Perfect for debugging webhook integrations during development without relying on external services.
 
@@ -8,8 +8,10 @@ Perfect for debugging webhook integrations during development without relying on
 
 - **Instant webhook capture** — send any POST request to `/webhooks/:hash` and it's stored automatically
 - **Full request inspection** — captures method, headers, body, query parameters, content-type, and client IP
+- **Web UI** — built-in interface with HTMX for browsing and inspecting webhooks in the browser
 - **Hash-based inboxes** — group webhooks by hash to test multiple integrations simultaneously
-- **Auto-expiration** — webhooks are automatically removed after 24 hours
+- **Auto-expiration** — webhooks expire after 24 hours and are cleaned up automatically every 10 minutes
+- **Docker ready** — run with a single `docker compose up`
 - **Zero config** — runs with SQLite out of the box, no external database required
 - **CORS enabled** — ready to be consumed by any frontend or external client
 
@@ -18,13 +20,14 @@ Perfect for debugging webhook integrations during development without relying on
 - [Go](https://go.dev/) 1.25+
 - [Gin](https://github.com/gin-gonic/gin) — HTTP framework
 - [GORM](https://gorm.io/) + SQLite — persistence
+- [HTMX](https://htmx.org/) — web interface interactivity
 - [godotenv](https://github.com/joho/godotenv) — environment configuration
 
 ## Getting Started
 
 ### Prerequisites
 
-- Go 1.25 or later
+- Go 1.25 or later (or Docker)
 
 ### Installation
 
@@ -46,7 +49,8 @@ Available variables:
 
 | Variable  | Description                  | Default              |
 |-----------|------------------------------|----------------------|
-| `DB_PATH` | Path to the SQLite database  | `./db/hookfy.sqlite` |
+| `PORT`    | Server port                  | `8080`               |
+| `DB_PATH` | Path to the SQLite database  | `/db/hookfy.db`      |
 
 ### Running
 
@@ -54,7 +58,17 @@ Available variables:
 go run main.go
 ```
 
-The server starts on `http://localhost:8081`.
+### Running with Docker
+
+```bash
+docker compose up --build
+```
+
+The container exposes port `8081` by default (mapped to the internal `PORT`). The SQLite database is persisted via a Docker volume.
+
+## Web Interface
+
+Access `http://localhost:8081` in your browser to open the web UI, where you can browse inboxes and inspect individual webhook details.
 
 ## API
 
@@ -83,16 +97,16 @@ curl -X POST http://localhost:8081/webhooks/my-test-123 \
 }
 ```
 
-### Retrieve Webhooks
+### Retrieve Webhooks (Inbox)
 
 ```
 GET /webhooks/inbox
 ```
 
-| Parameter | Type   | Description                          |
-|-----------|--------|--------------------------------------|
-| `hash`    | string | Filter by inbox hash (optional)      |
-| `type`    | string | Response format: `json` or `html` (default: `json`) |
+| Parameter | Type   | Description                                          |
+|-----------|--------|------------------------------------------------------|
+| `hash`    | string | Filter by inbox hash (optional)                      |
+| `type`    | string | Response format: `json` or `html` (default: `json`)  |
 
 **Example:**
 
@@ -122,6 +136,14 @@ curl http://localhost:8081/webhooks/inbox?hash=my-test-123
 }
 ```
 
+### Webhook Detail
+
+```
+GET /webhooks/:id
+```
+
+Returns an HTML page with the full details of a specific webhook.
+
 ## Project Structure
 
 ```
@@ -133,9 +155,19 @@ hookfy/
 ├── models/
 │   └── webhook.go               # Webhook data model
 ├── worker/
-│   └── delete_expired_webhook.go # Expired webhook cleanup (WIP)
+│   └── delete_expired_webhook.go # Expired webhook cleanup worker
+├── web/
+│   ├── static/
+│   │   ├── css/style.css        # UI styles
+│   │   └── js/htmx.min.js      # HTMX library
+│   └── templates/
+│       ├── index.html           # Home page
+│       ├── inbox.html           # Inbox view
+│       └── detail.html          # Webhook detail view
 ├── tests/                       # Bruno API test collection
 ├── main.go                      # Entry point
+├── Dockerfile                   # Multi-stage Docker build
+├── docker-compose.yml           # Docker Compose config
 ├── .env.example                 # Environment variables template
 ├── go.mod
 └── go.sum
